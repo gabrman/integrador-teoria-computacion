@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analizador de URLs Sospechosas</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Analizador de URLs Sospechosas de Phishing</h1>
+        <p>Ingrese una URL para verificar si es sospechosa o fiable.</p>
+        
+        <form method="POST" action="/">
+            <div class="form-group">
+                <label for="url_input">URL:</label>
+                <input type="text" id="url_input" name="url_input" value="{{ url_input }}" placeholder="Ej: https://www.google.com/search?q=test" required>
+            </div>
+            <button type="submit">Verificar URL</button>
+        </form>
+
+        {% if result %}
+            <div class="result-box">
+                <h2>Resultado para: <code>{{ result.url }}</code></h2>
+                {% if result.status == 'success' %}
+                    <p class="verdict {{ 'suspicious' if 'Sospechosa' in result.verdict else 'reliable' }}">
+                        {{ result.verdict }}
+                    </p>
+                    <h3>Estructura Parseada (AST):</h3>
+                    <pre>{{ result.parsed_data | tojson(indent=2) }}</pre>
+                {% else %}
+                    <p class="error">
+                        <strong>Error:</strong> {{ result.message }}
+                    </p>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>
